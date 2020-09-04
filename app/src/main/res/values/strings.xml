@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Five Love</string>
+    <string name="otp_send_txt">Xác minh số điện thoại</string>
+    <string name="otp_send_txt2">Chúng tôi sẽ gửi bạn một mã xác nhận OTP vào số điện thoại này.</string>
+    <string name="enter_mobile_number">Nhập số điện thọai</string>
+    <string name="_84">+84-</string>
+    <string name="_0394998716">0394998716</string>
+    <string name="txt_confirm">Xác nhận</string>
+    <string name="otp_received_txt">Nhập mã OTP được gửi tới:</string>
+    <string name="do_not_get_otp">Chưa nhận được mã OTP?</string>
+    <string name="resend_otp">Gửi lại</string>
+    <string name="login_trouble">Sự cố đăng nhập?</string>
+    <string name="login_by_phone">Đăng Nhập Qua Số Điện Thoại</string>
+    <string name="login_by_fb">Đăng Nhập Qua Facebook</string>
+    <string name="concept_app">Với hàng nghìn người sử dụng trên toàn đất nước, chúng tôi cung cấp cho bạn khả năng kết nối với mọi người cho dù bạn ở bất cứ nơi đâu.</string>
+    <string name="title_login">Find new \nfriends nearby</string>
+    <string name="hello_world">Hello world</string>
+    <string name="name">Tên</string>
+    <string name="update_profile">Thêm ảnh</string>
+    <string name="txt_id">ID: </string>
+    <string name="txt_sex">Giới tính: </string>
+    <string name="phone">Số điện thoại</string>
+    <string name="address">Địa chỉ</string>
+    <string name="logout">Đăng xuất</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="rotate">Xoay</string>
+    <string name="reset">Đặt lại</string>
+    <string name="_0_rotate">0°</string>
+    <string name="hint_name">Nhập tên mới của bạn</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Hủy</string>
+    <string name="male">Nam</string>
+    <string name="female">Nữ</string>
+    <string name="sex">Giới tính</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="image"
+            type="com.d.fivelove.model.Image" />
+    </data>
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/round_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@{image.bitmap,default = @drawable/background_login_image}"
+        app:riv_corner_radius="12dp">
+
+    </com.makeramen.roundedimageview.RoundedImageView>
+</layout>
