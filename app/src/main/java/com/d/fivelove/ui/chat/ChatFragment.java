@@ -1,5 +1,6 @@
 package com.d.fivelove.ui.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.d.fivelove.activities.OutgoingCallAudioActivity;
 import com.d.fivelove.databinding.ChatFragmentBinding;
 import com.d.fivelove.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -82,45 +84,35 @@ public class ChatFragment extends Fragment {
                         } else {
                             String sex = user.getSex();
                             if (sex.equals("nam")) {
-                                FirebaseFirestore.getInstance().collection("users")
-                                        .whereEqualTo("sex", "nữ")
-                                        .whereEqualTo("abilityListener", true)
-                                        .limit(1)
-                                        .get()
-                                        .addOnSuccessListener(queryDocumentSnapshots -> {
-                                            if (queryDocumentSnapshots.isEmpty()) {
-                                                {
-                                                    Toast.makeText(requireContext(), "Hiện không có ai online, bạn vui lòng thử lại sau ít phút!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            } else {
-                                                User partner = queryDocumentSnapshots.toObjects(User.class).get(0);
-                                                Toast.makeText(requireContext(), "Bạn đang kết nối với " + partner.getName(), Toast.LENGTH_SHORT).show();
-                                            }
-
-                                        });
-                            } else {
-                                FirebaseFirestore.getInstance().collection("users")
-                                        .whereEqualTo("sex", "nam")
-                                        .whereEqualTo("abilityListener", true)
-                                        .limit(1)
-                                        .get()
-                                        .addOnSuccessListener(queryDocumentSnapshots -> {
-                                            if (queryDocumentSnapshots.isEmpty()) {
-                                                {
-                                                    Toast.makeText(requireContext(), "Hiện không có ai online, bạn vui lòng thử lại sau ít phút!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            } else {
-                                                User partner = queryDocumentSnapshots.toObjects(User.class).get(0);
-                                                Toast.makeText(requireContext(), "Bạn đang kết nối với " + partner.getName(), Toast.LENGTH_SHORT).show();
-                                            }
-
-                                        });
+                                setSexConnect("nữ");
+                            } else if (sex.equals("nữ")) {
+                                setSexConnect("nam");
                             }
-
                         }
                     });
         });
 
+    }
+
+    private void setSexConnect(String sexConnect) {
+        FirebaseFirestore.getInstance().collection("users")
+                .whereEqualTo("sex", sexConnect)
+                .whereEqualTo("abilityListener", "true")
+                .limit(1)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        {
+                            Toast.makeText(requireContext(), "Hiện không có ai online, bạn vui lòng thử lại sau ít phút!", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        User partner = queryDocumentSnapshots.toObjects(User.class).get(0);
+                        Intent intent = new Intent(requireContext(), OutgoingCallAudioActivity.class);
+                        intent.putExtra("user", partner);
+                        startActivity(intent);
+                    }
+
+                });
     }
 
     private void setFabChat() {

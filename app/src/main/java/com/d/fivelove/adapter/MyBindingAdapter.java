@@ -48,8 +48,10 @@ public class MyBindingAdapter {
         if (resource != null) {
             if (resource.equals("nữ"))
                 view.setText(view.getResources().getText(R.string.txt_sex).toString().concat(" nữ"));
-            else {
+            else if (resource.equals("nam")) {
                 view.setText(view.getResources().getText(R.string.txt_sex).toString().concat(" nam"));
+            } else {
+                view.setText(view.getResources().getText(R.string.txt_sex).toString().concat(" không xác định!"));
             }
         } else {
             view.setText(view.getResources().getText(R.string.txt_sex).toString().concat(" không xác định!"));

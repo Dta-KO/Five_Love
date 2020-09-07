@@ -23,6 +23,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="Q">
+        <activity
+            android:name=".activities.OutgoingCallAudioActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.IncomingCallAudioActivity"
+            android:screenOrientation="portrait" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBIa76O3-KmUmY1LWtl0O8bHjoK4loQ1T8" />
@@ -44,6 +51,7 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".received.CloudMessaging"
             android:exported="false">
@@ -76,7 +84,6 @@
         <activity
             android:name=".activities.ImagesActivity"
             android:screenOrientation="portrait" />
-
     </application>
 
 </manifest>

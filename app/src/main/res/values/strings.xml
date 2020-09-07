@@ -33,4 +33,6 @@
     <string name="male">Nam</string>
     <string name="female">Nữ</string>
     <string name="sex">Giới tính</string>
+    <string name="invite_call_meeting">đang gọi cho bạn...</string>
+    <string name="outgoing_call_audio">đang giúp bạn gọi ẩn danh...</string>
 </resources>

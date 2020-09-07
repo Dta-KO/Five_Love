@@ -15,12 +15,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStore;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.d.fivelove.R;
 import com.d.fivelove.adapter.PagerAdapter;
 import com.d.fivelove.databinding.MainActivityBinding;
 import com.d.fivelove.ui.profile.ProfileFragment;
+import com.d.fivelove.utils.UpdateToServerCoroutines;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -32,23 +35,29 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    private static final long LOCATION_REFRESH_TIME = 1;
-    private static final float LOCATION_REFRESH_DISTANCE = 1;
+    private static final long LOCATION_REFRESH_TIME = 10;
+    private static final float LOCATION_REFRESH_DISTANCE = 1000;
     public static Callback callback;
+    final UpdateToServerCoroutines update = new ViewModelProvider(ViewModelStore::new).get(UpdateToServerCoroutines.class);
     private final LocationListener locationListener = location -> {
         String latitude = String.valueOf(location.getLatitude());
         String longitude = String.valueOf(location.getLongitude());
-        FirebaseFirestore.getInstance().collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .update("latitude", latitude);
-        FirebaseFirestore.getInstance().collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .update("longitude", longitude);
+        try {
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                    .update("latitude", latitude);
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .update("longitude", longitude);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     };
     protected TabLayout tab;
     private MainActivityBinding binding;
     private ViewPager2 viewPager2;
     private boolean doubleBackToExitPressedOnce = false;
+    private String id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> {
             updateFCMTokenToDB(instanceIdResult.getToken());
         });
-        updateAbilityListener("true");
+        update.updateAbilityListener(id, "true");
     }
 
     @Override
@@ -75,10 +84,18 @@ public class MainActivity extends AppCompatActivity {
         setupLocationManager();
     }
 
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        updateAbilityListener("false");
+    protected void onStop() {
+        super.onStop();
+        update.updateAbilityListener(id, "false");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        update.updateAbilityListener(id, "true");
     }
 
     private void setupLocationManager() {
@@ -97,13 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+
                     String permission = Manifest.permission.ACCESS_FINE_LOCATION;
                     String permission2 = Manifest.permission.ACCESS_COARSE_LOCATION;
                     String permission3 = null;
@@ -129,13 +140,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isGPSEnabled) {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+
                     String permission = Manifest.permission.ACCESS_FINE_LOCATION;
                     String permission2 = Manifest.permission.ACCESS_COARSE_LOCATION;
                     String[] permissions = new String[2];
@@ -199,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateFCMTokenToDB(String token) {
-        String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DocumentReference reference = FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(id);
@@ -207,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateAbilityListener(String abilityListener) {
-        String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DocumentReference reference = FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(id);

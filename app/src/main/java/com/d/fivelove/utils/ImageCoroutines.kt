@@ -25,5 +25,4 @@ class ImageCoroutines : ViewModel() {
                     .addOnFailureListener { Toast.makeText(context, "Something is wrong! Upload Image fail!", Toast.LENGTH_SHORT).show() }
         }
     }
-
 }

@@ -28,6 +28,8 @@ public class EditDialog extends DialogFragment {
     private EditText edtName;
     private RadioButton btnMan, btnFemale;
     private Button btnOk, btnCancel;
+    private String id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
 
     @Nullable
     @Override
@@ -43,6 +45,8 @@ public class EditDialog extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init();
+        setEdtName();
+        setCheckSex();
         setBtnOk();
         setBtnCancel();
     }
@@ -55,9 +59,38 @@ public class EditDialog extends DialogFragment {
         btnFemale = binding.btnFemale;
     }
 
+    private void setCheckSex() {
+        FirebaseFirestore.getInstance().collection("users")
+                .document(id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot != null) {
+                        if (documentSnapshot.get("sex") == null)
+                            return;
+                        String sex = documentSnapshot.get("sex").toString();
+                        if (sex.equals("nam")) {
+                            btnMan.setChecked(true);
+                        } else {
+                            btnFemale.setChecked(true);
+                        }
+                    }
+
+                });
+    }
+
+    private void setEdtName() {
+
+        FirebaseFirestore.getInstance().collection("users")
+                .document(id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot != null)
+                        edtName.setText(Objects.requireNonNull(documentSnapshot.get("name")).toString());
+                });
+    }
+
     private void setBtnOk() {
         btnOk.setOnClickListener(view -> {
-            String id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
             String name = edtName.getText().toString().trim();
             if (name.length() < 5) {
                 Toast.makeText(requireContext(), "Tên người tối thiểu 5 ký tự", Toast.LENGTH_SHORT).show();

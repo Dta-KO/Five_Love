@@ -19,10 +19,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven{
+        maven {
             url "https://maven.google.com"
-
         }
+        maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }
     }
 }
 
