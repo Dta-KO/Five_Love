@@ -1,6 +1,8 @@
 package com.d.fivelove.ui.chat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +11,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.d.fivelove.activities.OutgoingCallAudioActivity;
 import com.d.fivelove.databinding.ChatFragmentBinding;
@@ -19,10 +22,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+import java.util.Random;
+
 public class ChatFragment extends Fragment {
     private FloatingActionButton fab, fabCall, fabChat;
     private ChatFragmentBinding binding;
-    private ChatViewModel mViewModel;
     private boolean hideFab = true;
 
     public static ChatFragment newInstance() {
@@ -39,8 +44,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
-        // TODO: Use the ViewModel
+
         init();
         setFab();
         setFabCall();
@@ -71,34 +75,47 @@ public class ChatFragment extends Fragment {
     private void setFabCall() {
 
         fabCall.setOnClickListener(view -> {
-            String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            FirebaseFirestore.getInstance().collection("users").document(id)
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        final User user = documentSnapshot.toObject(User.class);
-                        assert user != null;
-                        if (user.getSex() == null || user.getSex().isEmpty() || user.getSex().equals("")) {
-                            Toast.makeText(requireContext(),
-                                    "Bạn cần cập nhật thông tin trong profile trước khi thực hiện tính năng này!",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            String sex = user.getSex();
-                            if (sex.equals("nam")) {
-                                setSexConnect("nữ");
-                            } else if (sex.equals("nữ")) {
-                                setSexConnect("nam");
+
+            String permission = Manifest.permission.RECORD_AUDIO;
+            String permission2 = Manifest.permission.MODIFY_AUDIO_SETTINGS;
+            int grant = ContextCompat.checkSelfPermission(requireContext(), permission);
+            int grant2 = ContextCompat.checkSelfPermission(requireContext(), permission2);
+
+            if (grant != PackageManager.PERMISSION_GRANTED || grant2 != PackageManager.PERMISSION_GRANTED) {
+                String[] permissions = new String[2];
+                permissions[0] = permission;
+                permissions[1] = permission2;
+                ActivityCompat.requestPermissions(requireActivity(), permissions, 1);
+            } else {
+                String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseFirestore.getInstance().collection("users").document(id)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            final User user = documentSnapshot.toObject(User.class);
+                            assert user != null;
+                            if (user.getSex() == null || user.getSex().isEmpty() || user.getSex().equals("")) {
+                                Toast.makeText(requireContext(),
+                                        "Bạn cần cập nhật thông tin trong profile trước khi thực hiện tính năng này!",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                String sex = user.getSex();
+                                if (sex.equals("nam")) {
+                                    initRandomConnect("nữ");
+                                } else if (sex.equals("nữ")) {
+                                    initRandomConnect("nam");
+                                }
                             }
-                        }
-                    });
+                        });
+            }
+
         });
 
     }
 
-    private void setSexConnect(String sexConnect) {
+    private void initRandomConnect(String sexConnect) {
         FirebaseFirestore.getInstance().collection("users")
                 .whereEqualTo("sex", sexConnect)
                 .whereEqualTo("abilityListener", "true")
-                .limit(1)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots.isEmpty()) {
@@ -106,7 +123,8 @@ public class ChatFragment extends Fragment {
                             Toast.makeText(requireContext(), "Hiện không có ai online, bạn vui lòng thử lại sau ít phút!", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        User partner = queryDocumentSnapshots.toObjects(User.class).get(0);
+                        List<User> partners = queryDocumentSnapshots.toObjects(User.class);
+                        User partner = partners.get(new Random().nextInt(partners.size()));
                         Intent intent = new Intent(requireContext(), OutgoingCallAudioActivity.class);
                         intent.putExtra("user", partner);
                         startActivity(intent);
@@ -120,5 +138,6 @@ public class ChatFragment extends Fragment {
 
         });
     }
+
 
 }

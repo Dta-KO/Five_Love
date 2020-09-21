@@ -1,8 +1,5 @@
 package com.d.fivelove.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +11,9 @@ import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.d.fivelove.databinding.ActivityOutgoingCallAudioBinding;
 import com.d.fivelove.model.User;
 import com.d.fivelove.network.ApiClient;
@@ -21,15 +21,13 @@ import com.d.fivelove.network.ApiService;
 import com.d.fivelove.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,17 +37,25 @@ public class OutgoingCallAudioActivity extends AppCompatActivity {
     private ActivityOutgoingCallAudioBinding binding;
     private ImageView btnCancel;
     private User partner;
+    private int roomId = new Random().nextInt();
 
-    private String inviterToken = null;
     private BroadcastReceiver invitationResponseReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(Constants.REMOTE_MSG_INVITATION_RESPONSE);
             if (type != null) {
                 if (type.equals(Constants.REMOTE_MSG_INVITATION_ACCEPTED)) {
-                    Toast.makeText(getApplicationContext(), "Invitation accepted!", Toast.LENGTH_SHORT).show();
-                } else if (type.equals(Constants.REMOTE_MSG_INVITATION_REFUSED)) {
-                    Toast.makeText(getApplicationContext(), "Invitation refused!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OutgoingCallAudioActivity.this, "Invitation accepted!", Toast.LENGTH_SHORT).show();
+                    //start call activity
+                    Intent callIntent = new Intent(OutgoingCallAudioActivity.this, AudioCallActivity.class);
+                    callIntent.putExtra(Constants.ROOM_ID, roomId);
+                    callIntent.putExtra(Constants.PARTNER_TOKEN, partner.getFcmToken());
+//                    callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(callIntent);
+                    finish();
+                }
+                if (type.equals(Constants.REMOTE_MSG_INVITATION_REFUSED)) {
+                    Toast.makeText(OutgoingCallAudioActivity.this, "Invitation refused!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -66,11 +72,6 @@ public class OutgoingCallAudioActivity extends AppCompatActivity {
         getData();
         setBtnCancel();
 
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> {
-            if (instanceIdResult != null) {
-                inviterToken = instanceIdResult.getToken();
-            }
-        });
     }
 
     private void getData() {
@@ -115,16 +116,11 @@ public class OutgoingCallAudioActivity extends AppCompatActivity {
 
                             data.put(Constants.REMOTE_MSG_TYPE, Constants.REMOTE_MSG_INVITATION);
                             data.put(Constants.REMOTE_MSG_MEETING_TYPE, meetingType);
-                            data.put(Constants.REMOTE_MSG_INVITER_TOKEN, inviterToken);
-                            if (documentSnapshot.toObject(User.class).getImages() == null) {
-                                data.put(Constants.REMOTE_MSG_AVATAR_USER, null);
-                            } else {
-                                data.put(Constants.REMOTE_MSG_AVATAR_USER, documentSnapshot.toObject(User.class).getImages().get(0).getBitmap());
-                            }
+                            data.put(Constants.REMOTE_MSG_INVITER_TOKEN, documentSnapshot.toObject(User.class).getFcmToken());
+                            data.put(Constants.ROOM_ID, roomId);
 
                             body.put(Constants.REMOTE_MSG_DATA, data);
                             body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
-
                             sendRemoteMessage(body.toString(), Constants.REMOTE_MSG_INVITATION);
                         } catch (JSONException e) {
                             e.printStackTrace();

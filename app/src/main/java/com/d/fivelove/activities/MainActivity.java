@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,7 +23,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.d.fivelove.R;
 import com.d.fivelove.adapter.PagerAdapter;
 import com.d.fivelove.databinding.MainActivityBinding;
+import com.d.fivelove.model.User;
 import com.d.fivelove.ui.profile.ProfileFragment;
+import com.d.fivelove.utils.Constants;
 import com.d.fivelove.utils.UpdateToServerCoroutines;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
@@ -33,11 +36,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Objects;
+import java.util.Random;
+
+import io.agora.rtc.IRtcEngineEventHandler;
+import io.agora.rtc.RtcEngine;
 
 public class MainActivity extends AppCompatActivity {
     private static final long LOCATION_REFRESH_TIME = 10;
     private static final float LOCATION_REFRESH_DISTANCE = 1000;
     public static Callback callback;
+
     final UpdateToServerCoroutines update = new ViewModelProvider(ViewModelStore::new).get(UpdateToServerCoroutines.class);
     private final LocationListener locationListener = location -> {
         String latitude = String.valueOf(location.getLatitude());
@@ -78,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Intent intent = getIntent();
-        int position = intent.getIntExtra("positionViewPager", 1);
+        int position = intent.getIntExtra(Constants.CURRENT_POSITION_VIEW_PAGER, 1);
 
         Objects.requireNonNull(tab.getTabAt(position)).select();
         setupLocationManager();
@@ -165,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageSelected(position);
                 BadgeDrawable badgeDrawable = Objects.requireNonNull(tab.getTabAt(position)).getOrCreateBadge();
                 badgeDrawable.setVisible(false);
-                if (position == 0 || position == 2) {
+                if (position == 0) {
                     tab.setVisibility(View.GONE);
                 } else {
                     tab.setVisibility(View.VISIBLE);
@@ -173,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void setTabLayout() {
         tab = binding.tabLayout;
@@ -193,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                     badgeDrawable.setMaxCharacterCount(3);
                     break;
                 case 2:
-                    tab1.setIcon(R.drawable.ic_message);
+                    tab1.setIcon(R.drawable.ic_chat);
                     badgeDrawable.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.badgeColor));
                     badgeDrawable.setVisible(true);
                     badgeDrawable.setNumber(111);
@@ -208,13 +215,6 @@ public class MainActivity extends AppCompatActivity {
                 .collection("users")
                 .document(id);
         reference.update("fcmToken", token);
-    }
-
-    private void updateAbilityListener(String abilityListener) {
-        DocumentReference reference = FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(id);
-        reference.update("abilityListener", abilityListener);
     }
 
     @Override

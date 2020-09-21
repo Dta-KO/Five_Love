@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Chronometer
+        android:id="@+id/time_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="@dimen/_16ssp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avt"
+        android:layout_width="@dimen/_86sdp"
+        android:layout_height="@dimen/_86sdp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_86sdp"
+        android:src="@drawable/background_login_image" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_24sdp"
+        android:text="@string/a_fivelover"
+        android:textColor="@color/primaryDarkColor"
+        android:textSize="@dimen/_18sdp" />
+
+    <ImageButton
+        android:id="@+id/end_call"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:background="@drawable/background_circle_red"
+        android:contentDescription="@string/app_name"
+        android:elevation="@dimen/_10sdp"
+        android:padding="@dimen/_10sdp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_call_end" />
+
+    <ImageButton
+        android:id="@+id/volume"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginEnd="@dimen/_60sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:background="@drawable/background_btn_circle_gray"
+        android:contentDescription="@string/app_name"
+        android:elevation="@dimen/_10sdp"
+        android:padding="@dimen/_10sdp"
+        android:scaleType="fitXY"
+        android:src="@drawable/background_btn_volume" />
+
+    <ImageButton
+        android:id="@+id/mic"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="@dimen/_60sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:background="@drawable/background_btn_circle_gray"
+        android:contentDescription="@string/app_name"
+        android:elevation="@dimen/_10sdp"
+        android:padding="@dimen/_10sdp"
+        android:scaleType="fitXY"
+        android:src="@drawable/background_btn_mic" />
+
+    <ImageButton
+        android:id="@+id/add_friend"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/_80sdp"
+        android:background="@drawable/background_btn_circle_gray"
+        android:contentDescription="@string/app_name"
+        android:elevation="@dimen/_10sdp"
+        android:padding="@dimen/_10sdp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_person_add"
+        android:visibility="gone" />
+</FrameLayout>

@@ -11,16 +11,23 @@ public class Constants {
     public static final String REMOTE_MSG_MEETING_TYPE = "meetingType";
     public static final String REMOTE_MSG_MEETING_AUDIO_TYPE = "audio";
     public static final String REMOTE_MSG_MEETING_VIDEO_TYPE = "video";
-    public static final String REMOTE_MSG_AVATAR_USER = "user";
+    public static final String REMOTE_MSG_AVATAR_USER = "avatarUser";
+
+    public static final String REMOTE_MSG_INVITER_ID = "inviterId";
     public static final String REMOTE_MSG_INVITATION_RESPONSE = "invitationResponse";
     public static final String REMOTE_MSG_INVITATION_ACCEPTED = "accepted";
     public static final String REMOTE_MSG_INVITATION_REFUSED = "refused";
+    public static final String REMOTE_MSG_INVITATION_CANCELED = "canceled";
+
     public static final String REMOTE_MSG_INVITER_TOKEN = "inviterToken";
 
 
     public static final String REMOTE_MSG_DATA = "data";
     public static final String REMOTE_MSG_REGISTRATION_IDS = "registration_ids";
-    public static final String REMOTE_MSG_INVITATION_CANCELED = "canceled";
+    public static final String ROOM_ID = "roomId";
+    public static final String CURRENT_POSITION_VIEW_PAGER = "positionViewPager";
+    public static final String INVITATION_ADD_FRIEND = "invitationAddFriend";
+    public static final String PARTNER_TOKEN = "partnerToken";
     private static final String REMOTE_MSG_AUTHORIZATION = "Authorization";
     private static final String REMOTE_MSG_CONTENT_TYPE = "Content-Type";
 

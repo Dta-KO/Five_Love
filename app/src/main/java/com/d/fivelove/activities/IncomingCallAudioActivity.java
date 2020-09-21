@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -21,9 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,6 +34,9 @@ public class IncomingCallAudioActivity extends AppCompatActivity {
 
     private ActivityCallAudioIncomingBinding binding;
     private ImageView btnAccept, btnCancel;
+    private int roomId;
+    private String partnerToken;
+
     private BroadcastReceiver invitationResponseReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -45,6 +49,7 @@ public class IncomingCallAudioActivity extends AppCompatActivity {
             }
         }
     };
+    private Ringtone ringtone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,12 @@ public class IncomingCallAudioActivity extends AppCompatActivity {
         getData();
         setBtnAccept();
         setBtnCancel();
+        roomId = Integer.parseInt(Objects.requireNonNull(getIntent().getStringExtra(Constants.ROOM_ID)));
+        partnerToken = getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN);
+        //sound for incoming call
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        ringtone.play();
     }
 
     private void getData() {
@@ -70,13 +81,16 @@ public class IncomingCallAudioActivity extends AppCompatActivity {
 
     private void setBtnAccept() {
         btnAccept.setOnClickListener(view -> {
+            ringtone.stop();
             sendInvitationResponse(Constants.REMOTE_MSG_INVITATION_ACCEPTED, getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN));
         });
     }
 
     private void setBtnCancel() {
         btnCancel.setOnClickListener(view -> {
+            ringtone.stop();
             sendInvitationResponse(Constants.REMOTE_MSG_INVITATION_REFUSED, getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN));
+
         });
     }
 
@@ -109,20 +123,19 @@ public class IncomingCallAudioActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call<String> call, @NotNull Response<String> response) {
                         if (response.isSuccessful()) {
                             if (type.equals(Constants.REMOTE_MSG_INVITATION_ACCEPTED)) {
-
-                                try {
-                                    URL urlServer = new URL("https://meet.jit.si");
-
-
-                                } catch (MalformedURLException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Refused invitation!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Accepted invitation!", Toast.LENGTH_SHORT).show();
+                                //start call activity
+                                Intent callIntent = new Intent(IncomingCallAudioActivity.this, AudioCallActivity.class);
+                                callIntent.putExtra(Constants.ROOM_ID, roomId);
+                                callIntent.putExtra(Constants.PARTNER_TOKEN, partnerToken);
+//                                callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(callIntent);
+                                finish();
                             }
-                            finish();
+                            if (type.equals(Constants.REMOTE_MSG_INVITATION_REFUSED)) {
+                                Toast.makeText(getApplicationContext(), "Refused invitation!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
                         }
                     }
 
@@ -134,6 +147,7 @@ public class IncomingCallAudioActivity extends AppCompatActivity {
                 });
 
     }
+
 
     @Override
     protected void onStart() {

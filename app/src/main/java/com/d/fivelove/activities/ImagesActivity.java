@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelStore;
 
 import com.d.fivelove.R;
 import com.d.fivelove.databinding.ActivityImagesBinding;
+import com.d.fivelove.utils.Constants;
 import com.d.fivelove.utils.ImageCoroutines;
 import com.yalantis.ucrop.callback.BitmapCropCallback;
 import com.yalantis.ucrop.view.GestureCropImageView;
@@ -133,7 +134,7 @@ public class ImagesActivity extends AppCompatActivity {
                     imageCoroutines.uploadImage(getApplicationContext(), uri);
                     Intent intent = new Intent(ImagesActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("positionViewPager", 0);
+                    intent.putExtra(Constants.CURRENT_POSITION_VIEW_PAGER, 0);
                     startActivity(intent);
                 }
 

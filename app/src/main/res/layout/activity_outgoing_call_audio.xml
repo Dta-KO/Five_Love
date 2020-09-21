@@ -75,13 +75,14 @@
 
             <ImageView
                 android:id="@+id/btn_cancel"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
                 android:layout_gravity="center"
                 android:background="@drawable/background_circle"
                 android:contentDescription="@string/app_name"
                 android:elevation="@dimen/_5sdp"
-                android:padding="@dimen/_5sdp"
+                android:padding="@dimen/_10sdp"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_cancel" />
         </FrameLayout>
 

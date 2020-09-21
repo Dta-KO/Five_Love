@@ -17,7 +17,6 @@ public class User implements Serializable {
     private String latitude, longitude;
     private String abilityListener, sex;
 
-
     public User() {
     }
 
@@ -30,6 +29,7 @@ public class User implements Serializable {
         this.images = images;
         this.fcmToken = fcmToken;
     }
+
 
     public String getSex() {
         return sex;

@@ -28,11 +28,20 @@
     <string name="reset">Đặt lại</string>
     <string name="_0_rotate">0°</string>
     <string name="hint_name">Nhập tên mới của bạn</string>
-    <string name="ok">OK</string>
     <string name="cancel">Hủy</string>
     <string name="male">Nam</string>
     <string name="female">Nữ</string>
     <string name="sex">Giới tính</string>
-    <string name="invite_call_meeting">đang gọi cho bạn...</string>
-    <string name="outgoing_call_audio">đang giúp bạn gọi ẩn danh...</string>
+    <string name="invite_call_meeting">đang gọi cho bạn…</string>
+    <string name="outgoing_call_audio">đang giúp bạn gọi ẩn danh…</string>
+    <string name="txt_state_call">Đang kết nối…</string>
+    <string name="ok">OK</string>
+
+    //agora
+    <string name="agora_app_id">f90ec83864444097a52ce618b2c58348</string>
+    <string name="agora_access_token">006f90ec83864444097a52ce618b2c58348IAB+MwUCWsmT6yNl/YszJ1RZoN3rAz00jXflUh4+aceUJYamEDYAAAAAEAAzuiAFDsJpXwEAAQAOwmlf</string>
+    <string name="a_fivelover">A FiveLover</string>
+    <string name="end_call">Cuộc gọi kết thúc: </string>
+    //end agora
+
 </resources>

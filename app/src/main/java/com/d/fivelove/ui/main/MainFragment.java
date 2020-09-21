@@ -2,6 +2,7 @@ package com.d.fivelove.ui.main;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class MainFragment extends Fragment {
     private MainViewModel mViewModel;
     private MainFragmentBinding binding;
     private ViewPager2 viewPager2;
-    private Handler imageHandler = new Handler();
+    private Handler imageHandler = new Handler(Looper.getMainLooper());
     private Runnable imageRunnable = new Runnable() {
         @Override
         public void run() {
